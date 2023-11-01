@@ -1,0 +1,709 @@
+@prefix : <http://purl.org/eduardocardosomelo/onto-educacional#> .
+@prefix dc: <http://purl.org/dc/elements/1.1/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix gufo: <http://purl.org/nemo/gufo#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix onto-educacional: <http://purl.org/eduardocardosomelo/onto-educacional#> .
+@base <http://purl.org/eduardocardosomelo/onto-educacional> .
+
+<http://purl.org/eduardocardosomelo/onto-educacional> rdf:type owl:Ontology ;
+                                                       owl:imports <http://purl.org/nemo/gufo#/1.0.0> ;
+                                                       dc:creator "Eduardo Cardoso Melo, Marcello Peixoto Bax"@pt ;
+                                                       dc:date "05/10/2023"@pt ;
+                                                       dc:title "Onto-Educacional"@pt ;
+                                                       rdfs:comment "O propósito da Onto-Educacional é recuperar informações sobre a distribuição de auxílios socioeconômicos no formato de bolsa permanência em programas da assistência estudantil do Instituto Federal de Educação de Minas Gerais (IFMG) para analisar sua contribuição na redução da evasão escolar e no aumento do desempenho acadêmico dos estudantes de cursos superiores presenciais."@pt .
+
+#################################################################
+#    Annotation properties
+#################################################################
+
+###  http://purl.org/dc/elements/1.1/creator
+dc:creator rdf:type owl:AnnotationProperty .
+
+
+###  http://purl.org/dc/elements/1.1/date
+dc:date rdf:type owl:AnnotationProperty .
+
+
+###  http://purl.org/dc/elements/1.1/title
+dc:title rdf:type owl:AnnotationProperty .
+
+
+#################################################################
+#    Object Properties
+#################################################################
+
+###  http://purl.org/eduardocardosomelo/onto-educacional#certificaGrau
+onto-educacional:certificaGrau rdf:type owl:ObjectProperty ;
+                               rdfs:domain onto-educacional:Curso ;
+                               rdfs:range onto-educacional:GrauAcademico ;
+                               rdfs:label "certificaGrau"@pt .
+
+
+###  http://purl.org/eduardocardosomelo/onto-educacional#confirmaMatricula
+onto-educacional:confirmaMatricula rdf:type owl:ObjectProperty ;
+                                   owl:inverseOf onto-educacional:solicitaMatricula ;
+                                   rdfs:domain onto-educacional:Matricula ;
+                                   rdfs:range onto-educacional:Estudante .
+
+
+###  http://purl.org/eduardocardosomelo/onto-educacional#ingressoPor
+onto-educacional:ingressoPor rdf:type owl:ObjectProperty ;
+                             rdfs:domain onto-educacional:Matricula ;
+                             rdfs:range onto-educacional:FormaDeIngresso ;
+                             rdfs:label "ingressoPor"@pt .
+
+
+###  http://purl.org/eduardocardosomelo/onto-educacional#obtemDesempenho
+onto-educacional:obtemDesempenho rdf:type owl:ObjectProperty ;
+                                 rdfs:domain onto-educacional:Estudante ;
+                                 rdfs:range onto-educacional:DesempenhoAcademico ;
+                                 rdfs:label "obtemDesempenho"@pt .
+
+
+###  http://purl.org/eduardocardosomelo/onto-educacional#ofertaCurso
+onto-educacional:ofertaCurso rdf:type owl:ObjectProperty ;
+                             owl:inverseOf onto-educacional:ofertadoPeloCampus ;
+                             rdfs:domain onto-educacional:Campus ;
+                             rdfs:range onto-educacional:Curso ;
+                             rdfs:label "ofertaCurso"@pt .
+
+
+###  http://purl.org/eduardocardosomelo/onto-educacional#ofertadoPeloCampus
+onto-educacional:ofertadoPeloCampus rdf:type owl:ObjectProperty ;
+                                    rdfs:domain onto-educacional:Curso ;
+                                    rdfs:range onto-educacional:Campus .
+
+
+###  http://purl.org/eduardocardosomelo/onto-educacional#pertenceArea
+onto-educacional:pertenceArea rdf:type owl:ObjectProperty ;
+                              rdfs:domain onto-educacional:Curso ;
+                              rdfs:range onto-educacional:AreaDeConhecimento ;
+                              rdfs:label "pertenceArea"@pt .
+
+
+###  http://purl.org/eduardocardosomelo/onto-educacional#pertenceCurso
+onto-educacional:pertenceCurso rdf:type owl:ObjectProperty ;
+                               owl:inverseOf onto-educacional:realizaMatricula ;
+                               rdfs:domain onto-educacional:Matricula ;
+                               rdfs:range onto-educacional:Curso .
+
+
+###  http://purl.org/eduardocardosomelo/onto-educacional#realizaMatricula
+onto-educacional:realizaMatricula rdf:type owl:ObjectProperty ;
+                                  rdfs:domain onto-educacional:Curso ;
+                                  rdfs:range onto-educacional:Matricula ;
+                                  rdfs:label "realizaMatricula"@pt .
+
+
+###  http://purl.org/eduardocardosomelo/onto-educacional#recebeAuxilio
+onto-educacional:recebeAuxilio rdf:type owl:ObjectProperty ;
+                               rdfs:domain onto-educacional:Bolsista ;
+                               rdfs:range onto-educacional:AuxilioSocioeconomico ;
+                               rdfs:label "recebeAuxilio"@pt .
+
+
+###  http://purl.org/eduardocardosomelo/onto-educacional#solicitaMatricula
+onto-educacional:solicitaMatricula rdf:type owl:ObjectProperty ;
+                                   rdfs:domain onto-educacional:Estudante ;
+                                   rdfs:range onto-educacional:Matricula ;
+                                   rdfs:label "solicitaMatricula"@pt .
+
+
+#################################################################
+#    Data properties
+#################################################################
+
+###  curso:percRfpAte1SalMeio
+<curso:percRfpAte1SalMeio> rdf:type owl:DatatypeProperty ;
+                           rdfs:subPropertyOf gufo:hasQualityValue ;
+                           rdfs:domain onto-educacional:Curso ;
+                           rdfs:label "percRfpAte1SalMeio"@pt .
+
+
+###  curso:relacaoAlunoProfessor
+<curso:relacaoAlunoProfessor> rdf:type owl:DatatypeProperty ;
+                              rdfs:subPropertyOf gufo:hasQualityValue ;
+                              rdfs:domain onto-educacional:Curso ;
+                              rdfs:label "relacaoAlunoProfessor"@pt .
+
+
+###  curso:turno
+<curso:turno> rdf:type owl:DatatypeProperty ;
+              rdfs:subPropertyOf gufo:hasQualityValue ;
+              rdfs:domain onto-educacional:Curso ;
+              rdfs:label "turno"@pt .
+
+
+###  curso:ultimaAvaliacaoMEC
+<curso:ultimaAvaliacaoMEC> rdf:type owl:DatatypeProperty ;
+                           rdfs:subPropertyOf gufo:hasQualityValue ;
+                           rdfs:domain onto-educacional:Curso ;
+                           rdfs:label "ultimaAvaliacaoMEC"@pt .
+
+
+###  desempenhoAcademico:crAntesDaPandemia
+<desempenhoAcademico:crAntesDaPandemia> rdf:type owl:DatatypeProperty ;
+                                        rdfs:subPropertyOf gufo:hasQualityValue ;
+                                        rdfs:domain onto-educacional:DesempenhoAcademico ;
+                                        rdfs:label "crAntesDaPandemia"@pt .
+
+
+###  desempenhoAcademico:crDuranteAPandemia
+<desempenhoAcademico:crDuranteAPandemia> rdf:type owl:DatatypeProperty ;
+                                         rdfs:subPropertyOf gufo:hasQualityValue ;
+                                         rdfs:domain onto-educacional:DesempenhoAcademico ;
+                                         rdfs:label "crDuranteAPandemia"@pt .
+
+
+###  desempenhoAcademico:crGeral
+<desempenhoAcademico:crGeral> rdf:type owl:DatatypeProperty ;
+                              rdfs:subPropertyOf gufo:hasQualityValue ;
+                              rdfs:domain onto-educacional:DesempenhoAcademico ;
+                              rdfs:label "crGeral"@pt .
+
+
+###  desempenhoAcademico:crPrimeiroAnoLetivo
+<desempenhoAcademico:crPrimeiroAnoLetivo> rdf:type owl:DatatypeProperty ;
+                                          rdfs:subPropertyOf gufo:hasQualityValue ;
+                                          rdfs:domain onto-educacional:DesempenhoAcademico ;
+                                          rdfs:label "crPrimeiroAnoLetivo"@pt .
+
+
+###  desempenhoAcademico:crPrimeiroSemestreLetivo
+<desempenhoAcademico:crPrimeiroSemestreLetivo> rdf:type owl:DatatypeProperty ;
+                                               rdfs:subPropertyOf gufo:hasQualityValue ;
+                                               rdfs:domain onto-educacional:DesempenhoAcademico ;
+                                               rdfs:label "crPrimeiroSemestreLetivo"@pt .
+
+
+###  desempenhoAcademico:percReprGeral
+<desempenhoAcademico:percReprGeral> rdf:type owl:DatatypeProperty ;
+                                    rdfs:subPropertyOf gufo:hasQualityValue ;
+                                    rdfs:domain onto-educacional:DesempenhoAcademico ;
+                                    rdfs:label "percReprGeral"@pt .
+
+
+###  desempenhoAcademico:percReprPrimeiroAnoLetivo
+<desempenhoAcademico:percReprPrimeiroAnoLetivo> rdf:type owl:DatatypeProperty ;
+                                                rdfs:subPropertyOf gufo:hasQualityValue ;
+                                                rdfs:domain onto-educacional:DesempenhoAcademico ;
+                                                rdfs:label "percReprPrimeiroAnoLetivo"@pt .
+
+
+###  desempenhoAcademico:percReprPrimeiroSemestreLetivo
+<desempenhoAcademico:percReprPrimeiroSemestreLetivo> rdf:type owl:DatatypeProperty ;
+                                                     rdfs:subPropertyOf gufo:hasQualityValue ;
+                                                     rdfs:domain onto-educacional:DesempenhoAcademico ;
+                                                     rdfs:label "percReprPrimeiroSemestreLetivo"@pt .
+
+
+###  desempenhoAcademico:qtdAprovacoes
+<desempenhoAcademico:qtdAprovacoes> rdf:type owl:DatatypeProperty ;
+                                    rdfs:subPropertyOf gufo:hasQualityValue ;
+                                    rdfs:domain onto-educacional:DesempenhoAcademico ;
+                                    rdfs:label "qtdAprovacoes"@pt .
+
+
+###  desempenhoAcademico:qtdReprovacoes
+<desempenhoAcademico:qtdReprovacoes> rdf:type owl:DatatypeProperty ;
+                                     rdfs:subPropertyOf gufo:hasQualityValue ;
+                                     rdfs:domain onto-educacional:DesempenhoAcademico ;
+                                     rdfs:label "qtdReprovacoes"@pt .
+
+
+###  estudante:naturalCidadeCampus
+<estudante:naturalCidadeCampus> rdf:type owl:DatatypeProperty ;
+                                rdfs:subPropertyOf gufo:hasQualityValue ;
+                                rdfs:domain onto-educacional:Estudante ;
+                                rdfs:label "naturalCidadeCampus"@pt .
+
+
+###  estudante:qtdPeriodosCursados
+<estudante:qtdPeriodosCursados> rdf:type owl:DatatypeProperty ;
+                                rdfs:subPropertyOf gufo:hasQualityValue ;
+                                rdfs:domain onto-educacional:Estudante ;
+                                rdfs:label "qtdPeriodosCursados"@pt .
+
+
+###  formado:anoConclusao
+<formado:anoConclusao> rdf:type owl:DatatypeProperty ;
+                       rdfs:subPropertyOf gufo:hasQualityValue ;
+                       rdfs:domain onto-educacional:Formado ;
+                       rdfs:label "anoConclusao"@pt .
+
+
+###  http://purl.org/nemo/gufo#hasQualityValue
+gufo:hasQualityValue rdf:type owl:DatatypeProperty .
+
+
+###  matricula:anoIngresso
+<matricula:anoIngresso> rdf:type owl:DatatypeProperty ;
+                        rdfs:subPropertyOf gufo:hasQualityValue ;
+                        rdfs:domain onto-educacional:Matricula ;
+                        rdfs:label "anoIngresso"@pt .
+
+
+###  matricula:cargaHorariaCurso
+<matricula:cargaHorariaCurso> rdf:type owl:DatatypeProperty ;
+                              rdfs:subPropertyOf gufo:hasQualityValue ;
+                              rdfs:domain onto-educacional:Matricula ;
+                              rdfs:label "cargaHorariaCurso"@pt .
+
+
+###  matricula:idadeNoIngresso
+<matricula:idadeNoIngresso> rdf:type owl:DatatypeProperty ;
+                            rdfs:subPropertyOf gufo:hasQualityValue ;
+                            rdfs:domain onto-educacional:Matricula ;
+                            rdfs:label "idadeNoIngresso"@pt .
+
+
+###  matricula:tempoEntreConclusaoEMIngresso
+<matricula:tempoEntreConclusaoEMIngresso> rdf:type owl:DatatypeProperty ;
+                                          rdfs:subPropertyOf gufo:hasQualityValue ;
+                                          rdfs:domain onto-educacional:Matricula ;
+                                          rdfs:label "tempoEntreConclusaoEMIngresso"@pt .
+
+
+###  pessoa:cor
+<pessoa:cor> rdf:type owl:DatatypeProperty ;
+             rdfs:subPropertyOf gufo:hasQualityValue ;
+             rdfs:domain onto-educacional:Pessoa ;
+             rdfs:label "cor"@pt .
+
+
+###  pessoa:genero
+<pessoa:genero> rdf:type owl:DatatypeProperty ;
+                rdfs:subPropertyOf gufo:hasQualityValue ;
+                rdfs:domain onto-educacional:Pessoa ;
+                rdfs:label "genero"@pt .
+
+
+#################################################################
+#    Classes
+#################################################################
+
+###  http://purl.org/eduardocardosomelo/onto-educacional#AreaDeConhecimento
+onto-educacional:AreaDeConhecimento rdf:type owl:Class ;
+                                    rdfs:subClassOf gufo:FunctionalComplex .
+
+
+###  http://purl.org/eduardocardosomelo/onto-educacional#AuxilioSocioeconomico
+onto-educacional:AuxilioSocioeconomico rdf:type owl:Class ;
+                                       rdfs:subClassOf gufo:FunctionalComplex .
+
+
+###  http://purl.org/eduardocardosomelo/onto-educacional#Bolsista
+onto-educacional:Bolsista rdf:type owl:Class ;
+                          rdfs:subClassOf onto-educacional:Estudante .
+
+
+###  http://purl.org/eduardocardosomelo/onto-educacional#Campus
+onto-educacional:Campus rdf:type owl:Class ;
+                        rdfs:subClassOf gufo:FunctionalComplex .
+
+
+###  http://purl.org/eduardocardosomelo/onto-educacional#Curso
+onto-educacional:Curso rdf:type owl:Class ;
+                       rdfs:subClassOf gufo:FunctionalComplex .
+
+
+###  http://purl.org/eduardocardosomelo/onto-educacional#DesempenhoAcademico
+onto-educacional:DesempenhoAcademico rdf:type owl:Class ;
+                                     rdfs:subClassOf gufo:FunctionalComplex .
+
+
+###  http://purl.org/eduardocardosomelo/onto-educacional#Estudante
+onto-educacional:Estudante rdf:type owl:Class ;
+                           rdfs:subClassOf onto-educacional:Pessoa .
+
+
+###  http://purl.org/eduardocardosomelo/onto-educacional#Evadido
+onto-educacional:Evadido rdf:type owl:Class ;
+                         rdfs:subClassOf onto-educacional:Matricula .
+
+
+###  http://purl.org/eduardocardosomelo/onto-educacional#FormaDeIngresso
+onto-educacional:FormaDeIngresso rdf:type owl:Class ;
+                                 rdfs:subClassOf gufo:FunctionalComplex .
+
+
+###  http://purl.org/eduardocardosomelo/onto-educacional#Formado
+onto-educacional:Formado rdf:type owl:Class ;
+                         rdfs:subClassOf onto-educacional:Matricula .
+
+
+###  http://purl.org/eduardocardosomelo/onto-educacional#GrauAcademico
+onto-educacional:GrauAcademico rdf:type owl:Class ;
+                               rdfs:subClassOf gufo:FunctionalComplex .
+
+
+###  http://purl.org/eduardocardosomelo/onto-educacional#Matricula
+onto-educacional:Matricula rdf:type owl:Class ;
+                           rdfs:subClassOf gufo:Relator .
+
+
+###  http://purl.org/eduardocardosomelo/onto-educacional#Matriculado
+onto-educacional:Matriculado rdf:type owl:Class ;
+                             rdfs:subClassOf onto-educacional:Matricula .
+
+
+###  http://purl.org/eduardocardosomelo/onto-educacional#Pessoa
+onto-educacional:Pessoa rdf:type owl:Class ;
+                        rdfs:subClassOf gufo:FunctionalComplex .
+
+
+#################################################################
+#    Individuals
+#################################################################
+
+###  http://purl.org/eduardocardosomelo/onto-educacional#AreaDeConhecimento
+onto-educacional:AreaDeConhecimento rdf:type owl:NamedIndividual ,
+                                             gufo:Kind .
+
+
+###  http://purl.org/eduardocardosomelo/onto-educacional#AuxilioSocioeconomico
+onto-educacional:AuxilioSocioeconomico rdf:type owl:NamedIndividual ,
+                                                gufo:Kind .
+
+
+###  http://purl.org/eduardocardosomelo/onto-educacional#Bolsista
+onto-educacional:Bolsista rdf:type owl:NamedIndividual ,
+                                   gufo:Role .
+
+
+###  http://purl.org/eduardocardosomelo/onto-educacional#Campus
+onto-educacional:Campus rdf:type owl:NamedIndividual ,
+                                 gufo:Kind .
+
+
+###  http://purl.org/eduardocardosomelo/onto-educacional#Curso
+onto-educacional:Curso rdf:type owl:NamedIndividual ,
+                                gufo:Kind .
+
+
+###  http://purl.org/eduardocardosomelo/onto-educacional#DesempenhoAcademico
+onto-educacional:DesempenhoAcademico rdf:type owl:NamedIndividual ,
+                                              gufo:Kind .
+
+
+###  http://purl.org/eduardocardosomelo/onto-educacional#Estudante
+onto-educacional:Estudante rdf:type owl:NamedIndividual ,
+                                    gufo:Role .
+
+
+###  http://purl.org/eduardocardosomelo/onto-educacional#Evadido
+onto-educacional:Evadido rdf:type owl:NamedIndividual ,
+                                  gufo:Phase .
+
+
+###  http://purl.org/eduardocardosomelo/onto-educacional#FormaDeIngresso
+onto-educacional:FormaDeIngresso rdf:type owl:NamedIndividual ,
+                                          gufo:Kind .
+
+
+###  http://purl.org/eduardocardosomelo/onto-educacional#Formado
+onto-educacional:Formado rdf:type owl:NamedIndividual ,
+                                  gufo:Phase .
+
+
+###  http://purl.org/eduardocardosomelo/onto-educacional#GrauAcademico
+onto-educacional:GrauAcademico rdf:type owl:NamedIndividual ,
+                                        gufo:Kind .
+
+
+###  http://purl.org/eduardocardosomelo/onto-educacional#Matricula
+onto-educacional:Matricula rdf:type owl:NamedIndividual ,
+                                    gufo:Kind .
+
+
+###  http://purl.org/eduardocardosomelo/onto-educacional#Matriculado
+onto-educacional:Matriculado rdf:type owl:NamedIndividual ,
+                                      gufo:Phase .
+
+
+###  http://purl.org/eduardocardosomelo/onto-educacional#Pessoa
+onto-educacional:Pessoa rdf:type owl:NamedIndividual ,
+                                 gufo:Kind .
+
+
+###  http://purl.org/eduardocardosomelo/onto-educacional#auxilio_bp01
+onto-educacional:auxilio_bp01 rdf:type owl:NamedIndividual ,
+                                       onto-educacional:AuxilioSocioeconomico ;
+                              rdfs:label "BP01"@pt .
+
+
+###  http://purl.org/eduardocardosomelo/onto-educacional#auxilio_bp02
+onto-educacional:auxilio_bp02 rdf:type owl:NamedIndividual ,
+                                       onto-educacional:AuxilioSocioeconomico ;
+                              rdfs:label "BP02"@pt .
+
+
+###  http://purl.org/eduardocardosomelo/onto-educacional#auxilio_bp03
+onto-educacional:auxilio_bp03 rdf:type owl:NamedIndividual ,
+                                       onto-educacional:AuxilioSocioeconomico ;
+                              rdfs:label "BP03"@pt .
+
+
+###  http://purl.org/eduardocardosomelo/onto-educacional#auxilio_bp04
+onto-educacional:auxilio_bp04 rdf:type owl:NamedIndividual ,
+                                       onto-educacional:AuxilioSocioeconomico ;
+                              rdfs:label "BP04"@pt .
+
+
+###  http://purl.org/eduardocardosomelo/onto-educacional#campus_bambui
+onto-educacional:campus_bambui rdf:type owl:NamedIndividual ,
+                                        onto-educacional:Campus ;
+                               onto-educacional:ofertaCurso onto-educacional:curso_cienciasbio_bambui ,
+                                                            onto-educacional:curso_engcomp_bambui ;
+                               rdfs:label "Bambuí"@pt .
+
+
+###  http://purl.org/eduardocardosomelo/onto-educacional#campus_formiga
+onto-educacional:campus_formiga rdf:type owl:NamedIndividual ,
+                                         onto-educacional:Campus ;
+                                onto-educacional:ofertaCurso onto-educacional:curso_computacao_formiga ;
+                                rdfs:label "Formiga"@pt .
+
+
+###  http://purl.org/eduardocardosomelo/onto-educacional#curso_cienciasbio_bambui
+onto-educacional:curso_cienciasbio_bambui rdf:type owl:NamedIndividual ,
+                                                   onto-educacional:Curso ;
+                                          onto-educacional:certificaGrau onto-educacional:grau_licenciatura ;
+                                          onto-educacional:ofertadoPeloCampus onto-educacional:campus_bambui ;
+                                          onto-educacional:realizaMatricula onto-educacional:matricula_estudante3 ;
+                                          <curso:percRfpAte1SalMeio> "80"@pt ;
+                                          <curso:relacaoAlunoProfessor> "19"@pt ;
+                                          <curso:turno> "Noturno"@pt ;
+                                          <curso:ultimaAvaliacaoMEC> "3"@pt ;
+                                          rdfs:label "Ciências Biológicas"@pt .
+
+
+###  http://purl.org/eduardocardosomelo/onto-educacional#curso_computacao_formiga
+onto-educacional:curso_computacao_formiga rdf:type owl:NamedIndividual ,
+                                                   onto-educacional:Curso ;
+                                          onto-educacional:certificaGrau onto-educacional:grau_bacharelado ;
+                                          onto-educacional:ofertadoPeloCampus onto-educacional:campus_formiga ;
+                                          onto-educacional:realizaMatricula onto-educacional:matricula_estudante2 ;
+                                          <curso:percRfpAte1SalMeio> "78"@pt ;
+                                          <curso:relacaoAlunoProfessor> "21"@pt ;
+                                          <curso:turno> "Noturno"@pt ;
+                                          <curso:ultimaAvaliacaoMEC> "4"@pt ;
+                                          rdfs:label "Ciência da Computação"@pt .
+
+
+###  http://purl.org/eduardocardosomelo/onto-educacional#curso_engcomp_bambui
+onto-educacional:curso_engcomp_bambui rdf:type owl:NamedIndividual ,
+                                               onto-educacional:Curso ;
+                                      onto-educacional:certificaGrau onto-educacional:grau_bacharelado ;
+                                      onto-educacional:ofertadoPeloCampus onto-educacional:campus_bambui ;
+                                      onto-educacional:realizaMatricula onto-educacional:matricula_estudante1 ;
+                                      <curso:percRfpAte1SalMeio> "65"@pt ;
+                                      <curso:relacaoAlunoProfessor> "18"@pt ;
+                                      <curso:turno> "Integral"@pt ;
+                                      <curso:ultimaAvaliacaoMEC> "4"@pt ;
+                                      rdfs:label "Engenharia de Computação"@pt .
+
+
+###  http://purl.org/eduardocardosomelo/onto-educacional#desempenho_estudante1
+onto-educacional:desempenho_estudante1 rdf:type owl:NamedIndividual ,
+                                                onto-educacional:DesempenhoAcademico ;
+                                       <desempenhoAcademico:crAntesDaPandemia> "85"@pt ;
+                                       <desempenhoAcademico:crDuranteAPandemia> "79"@pt ;
+                                       <desempenhoAcademico:crGeral> "80"@pt ;
+                                       <desempenhoAcademico:crPrimeiroAnoLetivo> "88"@pt ;
+                                       <desempenhoAcademico:crPrimeiroSemestreLetivo> "90"@pt ;
+                                       <desempenhoAcademico:percReprGeral> "10"@pt ;
+                                       <desempenhoAcademico:percReprPrimeiroAnoLetivo> "0"@pt ;
+                                       <desempenhoAcademico:percReprPrimeiroSemestreLetivo> "0"@pt ;
+                                       <desempenhoAcademico:qtdAprovacoes> "54"@pt ;
+                                       <desempenhoAcademico:qtdReprovacoes> "6"@pt .
+
+
+###  http://purl.org/eduardocardosomelo/onto-educacional#desempenho_estudante2
+onto-educacional:desempenho_estudante2 rdf:type owl:NamedIndividual ,
+                                                onto-educacional:DesempenhoAcademico ;
+                                       <desempenhoAcademico:crAntesDaPandemia> "65"@pt ;
+                                       <desempenhoAcademico:crDuranteAPandemia> "69"@pt ;
+                                       <desempenhoAcademico:crGeral> "67"@pt ;
+                                       <desempenhoAcademico:crPrimeiroAnoLetivo> "67"@pt ;
+                                       <desempenhoAcademico:crPrimeiroSemestreLetivo> "69"@pt ;
+                                       <desempenhoAcademico:percReprGeral> "0"@pt ;
+                                       <desempenhoAcademico:percReprPrimeiroAnoLetivo> "0"@pt ;
+                                       <desempenhoAcademico:percReprPrimeiroSemestreLetivo> "0"@pt ;
+                                       <desempenhoAcademico:qtdAprovacoes> "11"@pt ;
+                                       <desempenhoAcademico:qtdReprovacoes> "0"@pt .
+
+
+###  http://purl.org/eduardocardosomelo/onto-educacional#desempenho_estudante3
+onto-educacional:desempenho_estudante3 rdf:type owl:NamedIndividual ,
+                                                onto-educacional:DesempenhoAcademico ;
+                                       <desempenhoAcademico:crAntesDaPandemia> "0"@pt ;
+                                       <desempenhoAcademico:crDuranteAPandemia> "35"@pt ;
+                                       <desempenhoAcademico:crGeral> "35"@pt ;
+                                       <desempenhoAcademico:crPrimeiroAnoLetivo> "35"@pt ;
+                                       <desempenhoAcademico:crPrimeiroSemestreLetivo> "35"@pt ;
+                                       <desempenhoAcademico:percReprGeral> "100"@pt ;
+                                       <desempenhoAcademico:percReprPrimeiroAnoLetivo> "100"@pt ;
+                                       <desempenhoAcademico:percReprPrimeiroSemestreLetivo> "100"@pt ;
+                                       <desempenhoAcademico:qtdAprovacoes> "0"@pt ;
+                                       <desempenhoAcademico:qtdReprovacoes> "6"@pt .
+
+
+###  http://purl.org/eduardocardosomelo/onto-educacional#estudante1
+onto-educacional:estudante1 rdf:type owl:NamedIndividual ,
+                                     onto-educacional:Bolsista ;
+                            onto-educacional:obtemDesempenho onto-educacional:desempenho_estudante1 ;
+                            onto-educacional:recebeAuxilio onto-educacional:auxilio_bp02 ;
+                            onto-educacional:solicitaMatricula onto-educacional:matricula_estudante1 ;
+                            <estudante:naturalCidadeCampus> "Sim"@pt ;
+                            <estudante:qtdPeriodosCursados> "10"@pt ;
+                            <pessoa:cor> "Branca"@pt ;
+                            <pessoa:genero> "Masculino"@pt .
+
+
+###  http://purl.org/eduardocardosomelo/onto-educacional#estudante2
+onto-educacional:estudante2 rdf:type owl:NamedIndividual ,
+                                     onto-educacional:Estudante ;
+                            onto-educacional:obtemDesempenho onto-educacional:desempenho_estudante2 ;
+                            onto-educacional:solicitaMatricula onto-educacional:matricula_estudante2 ;
+                            <estudante:naturalCidadeCampus> "N"@pt ;
+                            <estudante:qtdPeriodosCursados> "2"@pt ;
+                            <pessoa:cor> "Parda"@pt ;
+                            <pessoa:genero> "Masculino"@pt .
+
+
+###  http://purl.org/eduardocardosomelo/onto-educacional#estudante3
+onto-educacional:estudante3 rdf:type owl:NamedIndividual ,
+                                     onto-educacional:Estudante ;
+                            onto-educacional:obtemDesempenho onto-educacional:desempenho_estudante3 ;
+                            onto-educacional:solicitaMatricula onto-educacional:matricula_estudante3 ;
+                            <estudante:naturalCidadeCampus> "N"@pt ;
+                            <estudante:qtdPeriodosCursados> "1"@pt ;
+                            <pessoa:cor> "Branca"@pt ;
+                            <pessoa:genero> "Feminino"@pt .
+
+
+###  http://purl.org/eduardocardosomelo/onto-educacional#forma_ingresso_sisu
+onto-educacional:forma_ingresso_sisu rdf:type owl:NamedIndividual ,
+                                              onto-educacional:FormaDeIngresso ;
+                                     rdfs:label "SISU"@pt .
+
+
+###  http://purl.org/eduardocardosomelo/onto-educacional#forma_ingresso_vestibular
+onto-educacional:forma_ingresso_vestibular rdf:type owl:NamedIndividual ,
+                                                    onto-educacional:FormaDeIngresso ;
+                                           rdfs:label "Vestibular"@pt .
+
+
+###  http://purl.org/eduardocardosomelo/onto-educacional#grau_bacharelado
+onto-educacional:grau_bacharelado rdf:type owl:NamedIndividual ,
+                                           onto-educacional:GrauAcademico ;
+                                  rdfs:label "Bacharelado"@pt .
+
+
+###  http://purl.org/eduardocardosomelo/onto-educacional#grau_licenciatura
+onto-educacional:grau_licenciatura rdf:type owl:NamedIndividual ,
+                                            onto-educacional:GrauAcademico ;
+                                   rdfs:label "Licenciatura"@pt .
+
+
+###  http://purl.org/eduardocardosomelo/onto-educacional#matricula_estudante1
+onto-educacional:matricula_estudante1 rdf:type owl:NamedIndividual ,
+                                               onto-educacional:Formado ;
+                                      onto-educacional:confirmaMatricula onto-educacional:estudante1 ;
+                                      onto-educacional:ingressoPor onto-educacional:forma_ingresso_vestibular ;
+                                      onto-educacional:pertenceCurso onto-educacional:curso_engcomp_bambui ;
+                                      <formado:anoConclusao> "2022"@pt ;
+                                      <matricula:anoIngresso> "2019"@pt ;
+                                      <matricula:cargaHorariaCurso> "3800"@pt ;
+                                      <matricula:idadeNoIngresso> "20"@pt ;
+                                      <matricula:tempoEntreConclusaoEMIngresso> "2"@pt .
+
+
+###  http://purl.org/eduardocardosomelo/onto-educacional#matricula_estudante2
+onto-educacional:matricula_estudante2 rdf:type owl:NamedIndividual ,
+                                               onto-educacional:Matriculado ;
+                                      onto-educacional:confirmaMatricula onto-educacional:estudante2 ;
+                                      onto-educacional:ingressoPor onto-educacional:forma_ingresso_sisu ;
+                                      onto-educacional:pertenceCurso onto-educacional:curso_computacao_formiga ;
+                                      <matricula:anoIngresso> "2020"@pt ;
+                                      <matricula:cargaHorariaCurso> "3600"@pt ;
+                                      <matricula:idadeNoIngresso> "22"@pt ;
+                                      <matricula:tempoEntreConclusaoEMIngresso> "4"@pt .
+
+
+###  http://purl.org/eduardocardosomelo/onto-educacional#matricula_estudante3
+onto-educacional:matricula_estudante3 rdf:type owl:NamedIndividual ,
+                                               onto-educacional:Evadido ;
+                                      onto-educacional:confirmaMatricula onto-educacional:estudante3 ;
+                                      onto-educacional:ingressoPor onto-educacional:forma_ingresso_sisu ;
+                                      onto-educacional:pertenceCurso onto-educacional:curso_cienciasbio_bambui ;
+                                      <matricula:anoIngresso> "2022"@pt ;
+                                      <matricula:cargaHorariaCurso> "2800"@pt ;
+                                      <matricula:idadeNoIngresso> "17"@pt .
+
+
+#################################################################
+#    Annotations
+#################################################################
+
+onto-educacional:AreaDeConhecimento rdfs:comment "Tabela de classificação de Áreas do Conhecimento desenvolvida pelo CNPq, que compreende oito grandes áreas que se desdobram em áreas e subáreas. [Glossário de termos referentes ao ensino de graduação do CEFET-MG]"@pt ;
+                                    rdfs:label "Area de Conhecimento"@pt .
+
+
+onto-educacional:AuxilioSocioeconomico rdfs:comment "Benefício financeiro na forma de bolsa permanência concedida ao estudante em situação de vulnerabilidade socioeconômica com o objetivo de favorecer sua permanência na educação superior. [Manual de preenchimento do Censo da Educação Superior 2021 (aluno)]"@pt ;
+                                       rdfs:label "Auxilio Socioeconomico"@pt .
+
+
+onto-educacional:Bolsista rdfs:comment "Estudante matriculado, possui renda familiar per capita de até 1,5 salário mínimo, cumpre os outros requisitos da Política de Assistência Estudantil e teve sua solicitação de auxílio socioeconômico deferida em processo seletivo institucional, tendo sido atribuído um tipo de bolsa permanência. [Política de Assistência Estudantil do IFMG e Glossário do painel de dados da UFRGS]"@pt ;
+                          rdfs:label "Bolsista"@pt .
+
+
+onto-educacional:Campus rdfs:comment "Localização física, isto é, endereço de funcionamento das atividades acadêmicas dos cursos presenciais ofertados pela instituição. [Manual de preenchimento do Censo da Educação Superior 2021 (IES)]"@pt ;
+                        rdfs:label "Campus"@pt .
+
+
+onto-educacional:Curso rdfs:label "Curso"@pt ;
+                       rdfs:comment "Combinação de disciplinas e atividades organizadas em campos gerais ou específicos do conhecimento, para atender objetivos educacionais definidos pela instituição, em consonância com diretrizes curriculares. [Glossário de Legislação do Ensino Superior da UFPA]"@pt .
+
+
+onto-educacional:DesempenhoAcademico rdfs:label "Desempenho Academico"@pt ;
+                                     rdfs:comment "Resultado de ações conduzidas por determinado estudante no ambiente institucional e avaliadas pelos educadores em termos de rendimento e eficiência, sendo comumente expresso no formato de conceitos/notas (de operacionalização mais simples) ou como coeficiente de rendimento (envolvendo maior complexidade para obtenção de uma medida final por integrar mais de um indicador). [Munhoz (2004) e Miranda et al. (2015)]"@pt .
+
+
+onto-educacional:Estudante rdfs:comment "Indivíduo que está regularmente matriculado em um curso ou, ainda, que já ingressou na instituição, embora não esteja cursando nenhuma disciplina (como nos casos de estudantes formados ou evadidos). [Glossário de Legislação do Ensino Superior da UFPA]"@pt ;
+                           rdfs:label "Estudante"@pt .
+
+
+onto-educacional:Evadido rdfs:comment "Estudante que decidiu, mesmo que contra sua vontade, pela não continuidade da sua formação educacional, considerando tanto saídas definitivas quanto temporárias. [José, Broilo e Andreoli (2011) e Comissão Especial de Estudos Sobre a Evasão nas Universidades Públicas Brasileiras (1996)]"@pt ;
+                         rdfs:label "Evadido"@pt .
+
+
+onto-educacional:FormaDeIngresso rdfs:comment "Tipo de processo seletivo ao qual o estudante se submeteu para ingressar em determinado curso. [Manual de preenchimento do Censo da Educação Superior 2021 (aluno)]"@pt ;
+                                 rdfs:label "Forma de Ingresso"@pt .
+
+
+onto-educacional:Formado rdfs:comment "Estudante que já concluiu, com sucesso, todas as exigências acadêmicas do curso, inclusive a colação de grau, não tendo mais vínculo ativo com a instituição. [Glossário de Legislação do Ensino Superior da UFPA]"@pt ;
+                         rdfs:label "Formado"@pt .
+
+
+onto-educacional:GrauAcademico rdfs:label "Grau Academico"@pt ;
+                               rdfs:comment "Grau conferido pela instituição como reconhecimento oficial pela conclusão dos requisitos exigidos pelo curso, podendo ser: bacharelado, licenciatura ou tecnológico. [Manual de preenchimento do Censo da Educação Superior 2021 (curso)]"@pt .
+
+
+onto-educacional:Matricula rdfs:comment "Ato formal de ingresso e de vinculação de um estudante a um curso de graduação. [Regulamento de Ensino dos Cursos de Graduação do IFMG]"@pt ;
+                           rdfs:label "Matricula"@pt .
+
+
+onto-educacional:Matriculado rdfs:label "Matriculado"@pt ;
+                             rdfs:comment "Aquele que, em decorrência do ato da matrícula (inicial ou de renovação), ocupa no presente momento uma vaga em determinado curso. [SEMERJ (2023)]"@pt .
+
+
+onto-educacional:Pessoa rdfs:label "Pessoa"@pt .
+
+
+###  Generated by the OWL API (version 4.5.9.2019-02-01T07:24:44Z) https://github.com/owlcs/owlapi
