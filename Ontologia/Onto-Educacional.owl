@@ -240,6 +240,13 @@ onto-educacional:solicitaMatricula rdf:type owl:ObjectProperty ;
 gufo:hasQualityValue rdf:type owl:DatatypeProperty .
 
 
+###  http://purl.org/onto-educacional#situacaoMatricula
+onto-educacional:situacaoMatricula rdf:type owl:DatatypeProperty ;
+                                   rdfs:subPropertyOf gufo:hasQualityValue ;
+                                   rdfs:domain onto-educacional:Matricula ;
+                                   rdfs:label "situacaoMatricula"@pt .
+
+
 ###  matricula:anoIngresso
 <matricula:anoIngresso> rdf:type owl:DatatypeProperty ;
                         rdfs:subPropertyOf gufo:hasQualityValue ;
@@ -644,7 +651,8 @@ onto-educacional:matricula_estudante3 rdf:type owl:NamedIndividual ,
                                       onto-educacional:pertenceCurso onto-educacional:curso_cienciasbio_bambui ;
                                       <matricula:anoIngresso> "2022"@pt ;
                                       <matricula:cargaHorariaCurso> "2800"@pt ;
-                                      <matricula:idadeNoIngresso> "17"@pt .
+                                      <matricula:idadeNoIngresso> "17"@pt ;
+                                      <matricula:tempoEntreConclusaoEMIngresso> "2"@pt .
 
 
 #################################################################
