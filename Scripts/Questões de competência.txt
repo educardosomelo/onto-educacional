@@ -1,0 +1,158 @@
+QC1: O desempenho acadêmico dos estudantes atendidos por auxílios socioeconômicos é superior ao daqueles que não são atendidos?
+MATCH (bol:Bolsista)-[:obtemDesempenho]->(des:DesempenhoAcademico)
+    WITH COUNT(bol) AS qtd, AVG(des.crGeral) AS cr_geral_medio, 'Bolsistas' AS tipo
+RETURN tipo, qtd AS qtd, ROUND(cr_geral_medio, 2) AS cr_geral_medio
+UNION ALL
+MATCH (est:Estudante)-[:obtemDesempenho]->(des:DesempenhoAcademico)
+    WITH COUNT(est) AS qtd, AVG(des.crGeral) AS cr_geral_medio, 'Não bolsistas' AS tipo
+RETURN tipo, qtd AS qtd, ROUND(cr_geral_medio, 2) AS cr_geral_medio;
+
+
+______________________________________________________
+QC2: Os estudantes que recebem auxílios socioeconômicos evadem menos proporcionalmente do que aqueles que não recebem?
+MATCH (mat:Matricula)-[:confirmaMatricula]->(bol:Bolsista)-[:obtemDesempenho]->(des:DesempenhoAcademico)
+    WITH mat.situacaoMatricula AS situacao_matricula, COUNT(mat) AS qtd
+    WITH COLLECT({situacao_matricula: situacao_matricula, qtdSituacaoMatricula: qtd}) AS dados, SUM(qtd) AS total_situacao
+UNWIND dados AS d 
+    WITH d.situacao_matricula AS situacao_matricula_estudantes, 100.0 * d.qtdSituacaoMatricula / total_situacao AS perc, d.qtdSituacaoMatricula AS qtdSituacaoMatricula, 'Bolsistas' AS tipo, total_situacao AS total_situacao
+WHERE situacao_matricula_estudantes = 'Evadido'
+RETURN tipo, qtdSituacaoMatricula AS qtd_evadidos, total_situacao AS total_do_grupo, ROUND(perc,1) AS proporcao
+UNION ALL
+MATCH (mat:Matricula)-[:confirmaMatricula]->(est:Estudante)-[:obtemDesempenho]->(des:DesempenhoAcademico)
+    WITH mat.situacaoMatricula AS situacao_matricula, COUNT(mat) AS qtd
+    WITH COLLECT({situacao_matricula: situacao_matricula, qtdSituacaoMatricula: qtd}) AS dados, SUM(qtd) AS total_situacao
+UNWIND dados AS d 
+    WITH d.situacao_matricula AS situacao_matricula_estudantes, 100.0 * d.qtdSituacaoMatricula / total_situacao AS perc, d.qtdSituacaoMatricula AS qtdSituacaoMatricula, 'Não bolsistas' AS tipo, total_situacao AS total_situacao
+WHERE situacao_matricula_estudantes = 'Evadido'
+RETURN tipo, qtdSituacaoMatricula AS qtd_evadidos, total_situacao AS total_do_grupo,  ROUND(perc,1) AS proporcao;
+
+
+______________________________________________________
+QC3: A proporção de estudantes formados é maior entre aqueles que recebem auxílios socioeconômicos?
+MATCH (mat:Matricula)-[:confirmaMatricula]->(bol:Bolsista)-[:obtemDesempenho]->(des:DesempenhoAcademico)
+    WITH mat.situacaoMatricula AS situacao_matricula, COUNT(mat) AS qtd
+    WITH COLLECT({situacao_matricula: situacao_matricula, qtdSituacaoMatricula: qtd}) AS dados, SUM(qtd) AS total_situacao
+UNWIND dados AS d 
+    WITH d.situacao_matricula AS situacao_matricula_estudantes, 100.0 * d.qtdSituacaoMatricula / total_situacao AS perc, d.qtdSituacaoMatricula AS qtdSituacaoMatricula, 'Bolsistas' AS tipo, total_situacao AS total_situacao
+WHERE situacao_matricula_estudantes = 'Formado'
+RETURN tipo, qtdSituacaoMatricula AS qtd_formados, total_situacao AS total_do_grupo, ROUND(perc,1) AS proporcao
+UNION ALL
+MATCH (mat:Matricula)-[:confirmaMatricula]->(est:Estudante)-[:obtemDesempenho]->(des:DesempenhoAcademico)
+    WITH mat.situacaoMatricula AS situacao_matricula, COUNT(mat) AS qtd
+    WITH COLLECT({situacao_matricula: situacao_matricula, qtdSituacaoMatricula: qtd}) AS dados, SUM(qtd) AS total_situacao
+UNWIND dados AS d 
+    WITH d.situacao_matricula AS situacao_matricula_estudantes, 100.0 * d.qtdSituacaoMatricula / total_situacao AS perc, d.qtdSituacaoMatricula AS qtdSituacaoMatricula, 'Não bolsistas' AS tipo, total_situacao AS total_situacao
+WHERE situacao_matricula_estudantes = 'Formado'
+RETURN tipo, qtdSituacaoMatricula AS qtd_formados, total_situacao AS total_do_grupo,  ROUND(perc,1) AS proporcao;
+
+
+______________________________________________________
+QC4: Existe relação entre a evasão escolar, desempenho acadêmico e as características pessoais dos estudantes bolsistas e não bolsistas, tais como gênero, cor e naturalidade na mesma cidade do Campus?
+
+*** GENERO ***
+CALL {
+MATCH (mat:Matricula {situacaoMatricula: 'Evadido'})-[:confirmaMatricula]->(est:Estudante)
+MATCH (est:Estudante)-[:obtemDesempenho]->(des:DesempenhoAcademico)
+    WITH est.genero AS genero, COUNT(mat) AS qtd, SUM(des.crGeral) AS cr_geral
+    WITH COLLECT({genero: genero, qtdGenero: qtd, cr_geral: cr_geral}) AS dados, SUM(qtd) AS total_evadidos
+UNWIND dados AS d 
+    WITH d.genero AS genero, 100.0 * d.qtdGenero / total_evadidos AS perc, d.qtdGenero AS qtdGenero, d.cr_geral / total_evadidos AS cr_geral_medio
+RETURN genero, 'Não bolsistas' AS tipo, qtdGenero AS qtd, ROUND(perc,1) AS percentual_entre_evadidos, ROUND(cr_geral_medio, 2) AS cr_geral_medio
+UNION ALL
+MATCH (mat:Matricula {situacaoMatricula: 'Evadido'})-[:confirmaMatricula]->(bol:Bolsista)
+MATCH (bol:Bolsista)-[:obtemDesempenho]->(des:DesempenhoAcademico)
+    WITH bol.genero AS genero, COUNT(mat) AS qtd, SUM(des.crGeral) AS cr_geral
+    WITH COLLECT({genero: genero, qtdGenero: qtd, cr_geral: cr_geral}) AS dados, SUM(qtd) AS total_evadidos
+UNWIND dados AS d 
+    WITH d.genero AS genero, 100.0 * d.qtdGenero / total_evadidos AS perc, d.qtdGenero AS qtdGenero, d.cr_geral / total_evadidos AS cr_geral_medio
+RETURN genero, 'Bolsistas' AS tipo, qtdGenero AS qtd, ROUND(perc,1) AS percentual_entre_evadidos, ROUND(cr_geral_medio, 2) AS cr_geral_medio
+}
+RETURN genero, tipo, qtd, percentual_entre_evadidos, cr_geral_medio
+ORDER BY genero, tipo;
+
+*** COR ***
+CALL {
+MATCH (mat:Matricula {situacaoMatricula: 'Evadido'})-[:confirmaMatricula]->(est:Estudante)
+MATCH (est:Estudante)-[:obtemDesempenho]->(des:DesempenhoAcademico)
+    WITH est.cor AS cor, COUNT(mat) AS qtd, SUM(des.crGeral) AS cr_geral
+    WITH COLLECT({cor: cor, qtdCor: qtd, cr_geral: cr_geral}) AS dados, SUM(qtd) AS total_evadidos
+UNWIND dados AS d 
+    WITH d.cor AS cor, 100.0 * d.qtdCor / total_evadidos AS perc, d.qtdCor AS qtdCor, d.cr_geral / total_evadidos AS cr_geral_medio
+RETURN 'Não bolsistas' AS tipo, cor, qtdCor AS qtd, ROUND(perc,1) AS percentual_entre_evadidos, ROUND(cr_geral_medio, 2) AS cr_geral_medio
+UNION ALL
+MATCH (mat:Matricula {situacaoMatricula: 'Evadido'})-[:confirmaMatricula]->(bol:Bolsista)
+MATCH (bol:Bolsista)-[:obtemDesempenho]->(des:DesempenhoAcademico)
+    WITH bol.cor AS cor, COUNT(mat) AS qtd, SUM(des.crGeral) AS cr_geral
+    WITH COLLECT({cor: cor, qtdCor: qtd, cr_geral: cr_geral}) AS dados, SUM(qtd) AS total_evadidos
+UNWIND dados AS d 
+    WITH d.cor AS cor, 100.0 * d.qtdCor / total_evadidos AS perc, d.qtdCor AS qtdCor, d.cr_geral / total_evadidos AS cr_geral_medio
+RETURN 'Bolsistas' AS tipo, cor, qtdCor AS qtd, ROUND(perc,1) AS percentual_entre_evadidos, ROUND(cr_geral_medio, 2) AS cr_geral_medio
+}
+RETURN cor, tipo, qtd, percentual_entre_evadidos, cr_geral_medio
+ORDER BY cor, tipo;
+
+*** NATURAL CIDADE CAMPUS ***
+CALL {
+MATCH (mat:Matricula {situacaoMatricula: 'Evadido'})-[:confirmaMatricula]->(est:Estudante)
+MATCH (est:Estudante)-[:obtemDesempenho]->(des:DesempenhoAcademico)
+    WITH est.naturalCidadeCampus AS natural_cidade_campus, COUNT(mat) AS qtd, SUM(des.crGeral) AS cr_geral
+    WITH COLLECT({natural_cidade_campus: natural_cidade_campus, qtdNaturalCC: qtd, cr_geral: cr_geral}) AS dados, SUM(qtd) AS total_evadidos
+UNWIND dados AS d 
+    WITH d.natural_cidade_campus AS natural_cidade_campus, 100.0 * d.qtdNaturalCC / total_evadidos AS perc, d.qtdNaturalCC AS qtdNaturalCC, d.cr_geral / total_evadidos AS cr_geral_medio
+RETURN natural_cidade_campus, 'Não bolsistas' AS tipo, qtdNaturalCC AS qtd, ROUND(perc,1) AS percentual_entre_evadidos, ROUND(cr_geral_medio, 2) AS cr_geral_medio
+UNION ALL
+MATCH (mat:Matricula {situacaoMatricula: 'Evadido'})-[:confirmaMatricula]->(bol:Bolsista)
+MATCH (bol:Bolsista)-[:obtemDesempenho]->(des:DesempenhoAcademico)
+    WITH bol.naturalCidadeCampus AS natural_cidade_campus, COUNT(mat) AS qtd, SUM(des.crGeral) AS cr_geral
+    WITH COLLECT({natural_cidade_campus: natural_cidade_campus, qtdNaturalCC: qtd, cr_geral: cr_geral}) AS dados, SUM(qtd) AS total_evadidos
+UNWIND dados AS d 
+    WITH d.natural_cidade_campus AS natural_cidade_campus, 100.0 * d.qtdNaturalCC / total_evadidos AS perc, d.qtdNaturalCC AS qtdNaturalCC, d.cr_geral / total_evadidos AS cr_geral_medio
+RETURN natural_cidade_campus, 'Bolsistas' AS tipo, qtdNaturalCC AS qtd, ROUND(perc,1) AS percentual_entre_evadidos, ROUND(cr_geral_medio, 2) AS cr_geral_medio
+}
+RETURN natural_cidade_campus, tipo, qtd, percentual_entre_evadidos, cr_geral_medio
+ORDER BY natural_cidade_campus, tipo;
+
+
+______________________________________________________
+QC5: Existem variações no desempenho acadêmico dos estudantes que recebem auxílios socioeconômicos e na taxa de evasão de acordo com o tipo de bolsa permanência destinada?
+MATCH (bol:Bolsista)-[:recebeAuxilio]->(aux:AuxilioSocioeconomico)
+MATCH (bol:Bolsista)-[:obtemDesempenho]->(des:DesempenhoAcademico)
+    WITH aux, COUNT(bol) AS qtd, AVG(des.crGeral) AS cr_geral_medio
+    WITH COLLECT({tipoBolsa: aux.nome, qtdBolsistas: qtd, crGeralMedio: cr_geral_medio}) AS dados, SUM(qtd) AS total_bolsistas
+UNWIND dados AS d
+    MATCH (mat:Matricula {situacaoMatricula: 'Evadido'})-[:confirmaMatricula]->(bol:Bolsista)-[:recebeAuxilio]->(aux:AuxilioSocioeconomico {nome: d.tipoBolsa})
+    WITH aux, COUNT(mat) AS qtd_evadidos, d.tipoBolsa AS tipoBolsa, d.qtdBolsistas AS qtdBolsistas, d.crGeralMedio AS crGeralMedio, total_bolsistas AS totalBolsistas
+    WITH COLLECT({tipoBolsa: tipoBolsa, qtdBolsistas: qtdBolsistas, crGeralMedio: crGeralMedio, totalBolsistas: totalBolsistas, qtdEvadidos: qtd_evadidos}) AS dados2
+UNWIND dados2 AS e
+    WITH e.tipoBolsa AS tipo_bolsa, e.qtdBolsistas AS qtd_bolsistas, e.crGeralMedio AS cr_geral_medio, e.qtdEvadidos AS qtd_evadidos, 100.0 * e.qtdEvadidos / e.qtdBolsistas AS taxa_evasao_tipo_bolsa
+RETURN tipo_bolsa, qtd_bolsistas AS qtd_bolsistas, ROUND(cr_geral_medio,2) AS cr_geral_medio, qtd_evadidos AS qtd_evadidos, ROUND(taxa_evasao_tipo_bolsa,1) AS taxa_evasao_tipo_bolsa 
+ORDER BY tipo_bolsa;
+
+
+______________________________________________________
+QC6: Como é a distribuição da evasão considerando as áreas de conhecimentos dos cursos, além da taxa de evasão de cada área?
+MATCH (mat:Matricula)-[:pertenceCurso]->(cur:Curso)-[:pertenceArea]->(are:AreaDeConhecimento)
+    WITH are, COUNT(mat) AS qtd
+    WITH COLLECT({area:are.nome, qtdEstudantes: qtd}) AS dados
+UNWIND dados AS d
+    MATCH (mat2:Matricula {situacaoMatricula: 'Evadido'})-[:pertenceCurso]->(cur2:Curso)-[:pertenceArea]->(are2:AreaDeConhecimento {nome: d.area})
+    WITH are2, COUNT(mat2) AS qtd_evadidos, d.qtdEstudantes AS qtd_estudantes
+    WITH COLLECT({area:are2.nome, qtdEvadidos: qtd_evadidos, qtdEstudantes: qtd_estudantes}) AS dados2, SUM(qtd_evadidos) AS total_evadidos
+UNWIND dados2 AS e
+    WITH e.area AS area_conhecimento, 100.0 * e.qtdEvadidos / total_evadidos AS perc, e.qtdEstudantes AS total_estudantes, e.qtdEvadidos AS qtd_evadidos, 100.0 * e.qtdEvadidos / e.qtdEstudantes AS taxa_evasao_area
+RETURN area_conhecimento, qtd_evadidos AS qtd_evadidos, ROUND(perc,1) AS percentual_entre_evadidos, total_estudantes AS total_estudantes_area, ROUND(taxa_evasao_area,1) AS taxa_evasao_area 
+ORDER BY area_conhecimento;
+
+______________________________________________________
+QC7: Como é a distribuição da evasão considerando o grau certificado pelos cursos, além da taxa de evasão de cada grau?
+MATCH (mat:Matricula)-[:pertenceCurso]->(cur:Curso)-[:certificaGrau]->(grau:GrauAcademico)
+    WITH grau, COUNT(mat) AS qtd
+    WITH COLLECT({grau:grau.nome, qtdEstudantes: qtd}) AS dados
+UNWIND dados AS d
+    MATCH (mat2:Matricula {situacaoMatricula: 'Evadido'})-[:pertenceCurso]->(cur2:Curso)-[:certificaGrau]->(grau2:GrauAcademico {nome: d.grau})
+    WITH grau2, COUNT(mat2) AS qtd_evadidos, d.qtdEstudantes AS qtd_estudantes
+    WITH COLLECT({grau:grau2.nome, qtdEvadidos: qtd_evadidos, qtdEstudantes: qtd_estudantes}) AS dados2, SUM(qtd_evadidos) AS total_evadidos
+UNWIND dados2 AS e
+    WITH e.grau AS grau_academico, 100.0 * e.qtdEvadidos / total_evadidos AS perc, e.qtdEstudantes AS total_estudantes, e.qtdEvadidos AS qtd_evadidos, 100.0 * e.qtdEvadidos / e.qtdEstudantes AS taxa_evasao_grau
+RETURN grau_academico, qtd_evadidos AS qtd_evadidos, ROUND(perc,1) AS percentual_entre_evadidos, total_estudantes AS total_estudantes_grau, ROUND(taxa_evasao_grau,1) AS taxa_evasao_grau 
+ORDER BY grau_academico;

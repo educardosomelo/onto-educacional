@@ -1,0 +1,195 @@
+### CAMPUS ###
+
+CREATE (cam1:Campus {nome: 'Arcos'});
+CREATE (cam2:Campus {nome: 'Bambuí'});
+CREATE (cam3:Campus {nome: 'Betim'});
+CREATE (cam4:Campus {nome: 'Congonhas'});
+CREATE (cam5:Campus {nome: 'Formiga'});
+CREATE (cam6:Campus {nome: 'Governador Valadares'});
+CREATE (cam7:Campus {nome: 'Ibirité'});
+CREATE (cam8:Campus {nome: 'Ipatinga'});
+CREATE (cam9:Campus {nome: 'Itabirito'});
+CREATE (cam10:Campus {nome: 'Ouro Branco'});
+CREATE (cam11:Campus {nome: 'Ouro Preto'});
+CREATE (cam12:Campus {nome: 'Piumhi'});
+CREATE (cam13:Campus {nome: 'Ponte Nova'});
+CREATE (cam14:Campus {nome: 'Ribeirão das Neves'});
+CREATE (cam15:Campus {nome: 'Sabará'});
+CREATE (cam16:Campus {nome: 'Santa Luzia'});
+CREATE (cam17:Campus {nome: 'São João Evangelista'});
+
+MATCH(cam:Campus) return COUNT(cam);
+MATCH(cam:Campus) return cam;
+
+
+################################################
+### GRAU ACADÊMICO ###
+
+CREATE (gra1:GrauAcademico {nome: 'Bacharelado'});
+CREATE (gra2:GrauAcademico {nome: 'Licenciatura'});
+CREATE (gra3:GrauAcademico {nome: 'Tecnológico'});
+
+MATCH(gra:GrauAcademico) return COUNT(gra);
+MATCH(gra:GrauAcademico) return gra;
+
+
+################################################
+### ÁREA DE CONHECIMENTO ###
+
+CREATE (are1:AreaDeConhecimento {nome: 'Ciências Agrárias'});
+CREATE (are2:AreaDeConhecimento {nome: 'Ciências Biológicas'});
+CREATE (are3:AreaDeConhecimento {nome: 'Ciências da Saúde'});
+CREATE (are4:AreaDeConhecimento {nome: 'Ciências Exatas e da Terra'});
+CREATE (are5:AreaDeConhecimento {nome: 'Ciências Humanas'});
+CREATE (are6:AreaDeConhecimento {nome: 'Ciências Sociais Aplicadas'});
+CREATE (are7:AreaDeConhecimento {nome: 'Engenharias'});
+CREATE (are8:AreaDeConhecimento {nome: 'Linguística Letras e Artes'});
+
+MATCH(are:AreaDeConhecimento) return COUNT(are);
+MATCH(are:AreaDeConhecimento) return are;
+
+
+################################################
+### FORMA DE INGRESSO ###
+
+CREATE (fin1:FormaDeIngresso {nome: 'Obtenção de novo título'});
+CREATE (fin2:FormaDeIngresso {nome: 'SISU'});
+CREATE (fin3:FormaDeIngresso {nome: 'Transferência externa'});
+CREATE (fin4:FormaDeIngresso {nome: 'Vestibular'});
+
+MATCH(fin:FormaDeIngresso) return COUNT(fin);
+MATCH(fin:FormaDeIngresso) return fin;
+
+
+################################################
+### AUXÍLIO SOCIOECONÔMICO ###
+
+CREATE (aux1:AuxilioSocioeconomico {nome: 'BP1'});
+CREATE (aux2:AuxilioSocioeconomico {nome: 'BP2'});
+CREATE (aux3:AuxilioSocioeconomico {nome: 'BP3'});
+CREATE (aux4:AuxilioSocioeconomico {nome: 'BP4'});
+
+MATCH(aux:AuxilioSocioeconomico) return COUNT(aux);
+MATCH(aux:AuxilioSocioeconomico) return aux;
+
+
+################################################
+### CURSO ###
+
+Comando SQL para recuperação dos dados de origem:
+SELECT id, campus, curso, turno, ultima_avaliacao_mec, relacao_aluno_professor, perc_rfp_ate_1salmeio_curso, area_conhecimento, grau_academico FROM aluno_ontologia order by id
+
+LOAD CSV WITH HEADERS FROM 'file:///Curso.csv' AS l
+CREATE(cur:Curso {idEstudante: toInteger(l.id), nome:l.curso, turno: l.turno, ultimaAvaliacaoMEC: toInteger(l.ultima_avaliacao_mec), relacaoAlunoProfessor: toFloat(l.relacao_aluno_professor), percRfpAte1SalMeio: toFloat(l.perc_rfp_ate_1salmeio_curso)})
+RETURN COUNT(cur)
+
+### pertenceArea - Curso -> AreaDeConhecimento ###
+LOAD CSV WITH HEADERS FROM 'file:///Curso.csv' AS l
+MATCH (cur:Curso {idEstudante: toInteger(l.id)})
+MATCH (are:AreaDeConhecimento {nome: l.area_conhecimento})
+MERGE (cur)-[:pertenceArea]->(are)
+
+### certificaGrau - Curso -> GrauAcademico ###
+LOAD CSV WITH HEADERS FROM 'file:///Curso.csv' AS l
+MATCH (cur:Curso {idEstudante: toInteger(l.id)})
+MATCH (gra:GrauAcademico {nome: l.grau_academico})
+MERGE (cur)-[:certificaGrau]->(gra)
+
+### ofertaCurso e ofertadoPeloCampus - Campus -> Curso ###
+LOAD CSV WITH HEADERS FROM 'file:///Curso.csv' AS l
+MATCH (cur:Curso {idEstudante: toInteger(l.id)})
+MATCH (cam:Campus {nome: l.campus})
+MERGE (cam)-[:ofertaCurso]->(cur)
+MERGE (cur)-[:ofertadoPeloCampus]->(cam)
+
+
+################################################
+### DESEMPENHO ACADÊMICO ###
+
+Comando SQL para recuperação dos dados de origem:
+SELECT id, cr_geral, cr_antes_pandemia, cr_durante_pandemia, cr_primeiro_semestre_letivo, cr_primeiro_ano_letivo, perc_repr_geral, perc_repr_primeiro_semestre_letivo, perc_repr_primeiro_ano_letivo, qtd_aprovacoes, qtd_reprovacoes FROM aluno_ontologia
+
+LOAD CSV WITH HEADERS FROM 'file:///DesempenhoAcademico.csv' AS l
+CREATE(des:DesempenhoAcademico {idEstudante: toInteger(l.id), crGeral: toFloat(l.cr_geral), crAntesDaPandemia: toFloat(l.cr_antes_pandemia), crDuranteAPandemia: toFloat(l.cr_durante_pandemia), crPrimeiroSemestreLetivo: toFloat(l.cr_primeiro_semestre_letivo), crPrimeiroAnoLetivo: toFloat(l.cr_primeiro_ano_letivo), percReprGeral: toFloat(l.perc_repr_geral), percReprPrimeiroSemestreLetivo: toFloat(l.perc_repr_primeiro_semestre_letivo), percReprPrimeiroAnoLetivo: toFloat(l.perc_repr_primeiro_ano_letivo), qtdAprovacoes: toInteger(l.qtd_aprovacoes), qtdReprovacoes: toInteger(l.qtd_reprovacoes)})
+RETURN COUNT(des)
+
+
+################################################
+### ESTUDANTE ###
+
+Comando SQL para recuperação dos dados de origem:
+SELECT id, natural_cidade_campus, qtd_periodos_cursados, genero, cor
+FROM aluno_ontologia where bolsista_ae = 'N' order by id
+
+LOAD CSV WITH HEADERS FROM 'file:///Estudante.csv' AS l
+CREATE(est:Estudante {idEstudante: toInteger(l.id), naturalCidadeCampus: l.natural_cidade_campus, qtdPeriodosCursados: toInteger(l.qtd_periodos_cursados), genero: l.genero, cor: l.cor})
+RETURN COUNT(est)
+
+### obtemDesempenho - Estudante ###
+LOAD CSV WITH HEADERS FROM 'file:///Estudante.csv' AS l
+MATCH (est:Estudante {idEstudante: toInteger(l.id)})
+MATCH (des:DesempenhoAcademico {idEstudante: toInteger(l.id)})
+MERGE (est)-[:obtemDesempenho]->(des)
+
+
+################################################
+### BOLSISTA ###
+
+Comando SQL para recuperação dos dados de origem:
+SELECT id, natural_cidade_campus, qtd_periodos_cursados, genero, cor
+FROM aluno_ontologia where bolsista_ae = 'S' order by id
+
+LOAD CSV WITH HEADERS FROM 'file:///Bolsista.csv' AS l
+CREATE(bol:Bolsista {idEstudante: toInteger(l.id), naturalCidadeCampus: l.natural_cidade_campus, qtdPeriodosCursados: toInteger(l.qtd_periodos_cursados), genero: l.genero, cor: l.cor})
+RETURN COUNT(bol)
+
+### obtemDesempenho - Bolsista ###
+LOAD CSV WITH HEADERS FROM 'file:///Bolsista.csv' AS l
+MATCH (bol:Bolsista {idEstudante: toInteger(l.id)})
+MATCH (des:DesempenhoAcademico {idEstudante: toInteger(l.id)})
+MERGE (bol)-[:obtemDesempenho]->(des)
+
+### recebeAuxilio - Bolsista ###
+Comando SQL para recuperação dos dados de origem:
+SELECT id, auxilio_socioeconomico FROM aluno_ontologia WHERE bolsista_ae = 'S' ORDER BY id
+
+LOAD CSV WITH HEADERS FROM 'file:///recebeAuxilio.csv' AS l
+MATCH (bol:Bolsista {idEstudante: toInteger(l.id)})
+MATCH (aux:AuxilioSocioeconomico {nome: l.auxilio_socioeconomico})
+MERGE (bol)-[:recebeAuxilio]->(aux)
+
+
+################################################
+### MATRÍCULA ###
+
+Comando SQL para recuperação dos dados de origem:
+SELECT id, idade_ingresso, ano_ingresso, tempo_entre_conclusao_em_ingresso, carga_horaria, forma_ingresso, curso, ano_conclusao, situacao_matricula FROM aluno_ontologia order by id
+
+LOAD CSV WITH HEADERS FROM 'file:///Matricula.csv' AS l
+CREATE(mat:Matricula {idEstudante: toInteger(l.id), idadeNoIngresso: toInteger(l.idade_ingresso), anoIngresso: toInteger(l.ano_ingresso), tempoEntreConclusaoEMIngresso: toInteger(l.tempo_entre_conclusao_em_ingresso), cargaHorariaCurso: toInteger(l.carga_horaria), anoConclusao: toInteger(l.ano_conclusao), situacaoMatricula: l.situacao_matricula})
+RETURN COUNT(mat)
+
+### ingressoPor - Matrícula -> FormaDeIngresso ###
+LOAD CSV WITH HEADERS FROM 'file:///Matricula.csv' AS l
+MATCH (mat:Matricula {idEstudante: toInteger(l.id)})
+MATCH (fin:FormaDeIngresso {nome: l.forma_ingresso})
+MERGE (mat)-[:ingressoPor]->(fin)
+
+### pertenceCurso e realizaCurso - Matrícula -> Curso ###
+LOAD CSV WITH HEADERS FROM 'file:///Matricula.csv' AS l
+MATCH (mat:Matricula {idEstudante: toInteger(l.id)})
+MATCH (cur:Curso {idEstudante: toInteger(l.id)})
+MERGE (mat)-[:pertenceCurso]->(cur)
+MERGE (cur)-[:realizaMatricula]->(mat)
+
+### confirmaMatricula - Matrícula -> Estudante ###
+LOAD CSV WITH HEADERS FROM 'file:///Matricula.csv' AS l
+MATCH (mat:Matricula {idEstudante: toInteger(l.id)})
+MATCH (est:Estudante {idEstudante: toInteger(l.id)})
+MERGE (mat)-[:confirmaMatricula]->(est)
+
+### confirmaMatricula - Matrícula -> Bolsista ###
+LOAD CSV WITH HEADERS FROM 'file:///Matricula.csv' AS l
+MATCH (mat:Matricula {idEstudante: toInteger(l.id)})
+MATCH (bol:Bolsista {idEstudante: toInteger(l.id)})
+MERGE (mat)-[:confirmaMatricula]->(bol)
